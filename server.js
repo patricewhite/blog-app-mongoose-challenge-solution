@@ -67,8 +67,23 @@ app.post('/posts', (req, res) => {
       }
       return User.hashPassword(password);
     })
-
+    .then(hash => {
+      return User
+      .create({
+        username:username,
+        password:hash,
+        firstName:firstName,
+        lastName:lastName
+      })
+    })
+     .then(user =>{
+       return res.status(201).json(user.apiRepr());
+     })
+     .catch (err=> {
+       res.status(500).json({message:'Internal Server Error'})
+     });
   });
+  
 
   BlogPost
     .create({
