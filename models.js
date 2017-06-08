@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const passport = require('passport');
-const BasicStrategy = require('passport-http').BasicStrategy;
+
 
 mongoose.Promise = global.Promise;
 const blogPostSchema = mongoose.Schema({
@@ -43,14 +42,14 @@ UserSchema.methods.apiRepr = function() {
 }
 
 UserSchema.methods.validatePassword = function(password, callback){
-
-  bycrypt.compare(password. this.password, function(err, isValid){
+console.log(password);
+  bcrypt.compare(password, this.password, function(err, isValid){
     if(err) {
       callback(err);
       return;
     }
     callback(null, isValid);
-  });lid
+  });
 };
 
 UserSchema.statics.hashPassword = function(password){
@@ -74,5 +73,5 @@ blogPostSchema.methods.apiRepr = function() {
 const BlogPost = mongoose.model('BlogPost', blogPostSchema);
 const User = mongoose.model('User', UserSchema);
 
-module.exports = {BlogPost};
-module.exports = {User};
+module.exports = {BlogPost, User};
+
