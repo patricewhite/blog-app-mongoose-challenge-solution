@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 
 mongoose.Promise = global.Promise;
 
+console.log('casey was here');
 
 app.get('/posts', (req, res) => {
   BlogPost
@@ -51,40 +52,6 @@ app.post('/posts', (req, res) => {
     }
   }
 
-  app.post('/users', (req,res) => {
-    const username = req.user.username;
-    const firstName = req.user.firstName;
-    const lastName = req.user.lastName;
-    const password = req.user.password;
-
-    return User
-    .find({username})
-    .count()
-    .exec()
-    .then(count => {
-      if(count > 0){
-      return res.status(422).json({message: 'username already taken'});
-      }
-      return User.hashPassword(password);
-    })
-    .then(hash => {
-      return User
-      .create({
-        username:username,
-        password:hash,
-        firstName:firstName,
-        lastName:lastName
-      })
-    })
-     .then(user =>{
-       return res.status(201).json(user.apiRepr());
-     })
-     .catch (err=> {
-       res.status(500).json({message:'Internal Server Error'})
-     });
-  });
-  
-
   BlogPost
     .create({
       title: req.body.title,
@@ -97,6 +64,44 @@ app.post('/posts', (req, res) => {
         res.status(500).json({error: 'Something went wrong'});
     });
 
+});
+
+app.post('/users', (req,res) => {
+  console.log("post triggred");
+  const username = req.body.username;
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
+  const password = req.body.password;
+
+  return User
+  .find({username})
+  .count()
+  .exec()
+  .then(count => {
+    console.log("find finished");
+    if(count > 0){
+    return res.status(422).json({message: 'username already taken'});
+    }
+    return User.hashPassword(password);
+  })
+  .then(hash => {
+    console.log("after checking user doesn't exisit");
+    return User
+    .create({
+      username:username,
+      password:hash,
+      firstName:firstName,
+      lastName:lastName
+    })
+  })
+   .then(user =>{
+     console.log("should send 201");
+     return res.status(201).json(user.apiRepr());
+   })
+   .catch (err=> {
+     console.log("promise error", err);
+     res.status(500).json({message:'Internal Server Error'})
+   });
 });
 
 

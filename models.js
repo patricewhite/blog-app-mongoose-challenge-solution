@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt.js');
+const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const BasicStrategy = require('passport-http').BasicStrategy;
 
@@ -24,11 +24,11 @@ const UserSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    firstName{
+    firstName: {
       type:String,
       required: true
     },
-    lastName{
+    lastName: {
       type:String,
       required: true
     }
@@ -54,7 +54,7 @@ UserSchema.methods.validatePassword = function(password, callback){
 };
 
 UserSchema.statics.hashPassword = function(password){
-  return bycrypt.hash(password, 10);
+  return bcrypt.hash(password, 10);
 }
 
 blogPostSchema.virtual('authorName').get(function() {
@@ -75,4 +75,4 @@ const BlogPost = mongoose.model('BlogPost', blogPostSchema);
 const User = mongoose.model('User', UserSchema);
 
 module.exports = {BlogPost};
-module.export = {User};
+module.exports = {User};
