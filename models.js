@@ -1,3 +1,4 @@
+'use strict';
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -14,23 +15,23 @@ const blogPostSchema = mongoose.Schema({
 });
 
 const UserSchema = new mongoose.Schema({
-    username: {
-      type: String,
-      required: true,
-      unique: true
-    },
-    password: {
-      type: String,
-      required: true
-    },
-    firstName: {
-      type:String,
-      required: true
-    },
-    lastName: {
-      type:String,
-      required: true
-    }
+  username: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  firstName: {
+    type:String,
+    required: true
+  },
+  lastName: {
+    type:String,
+    required: true
+  }
 });
 
 UserSchema.methods.apiRepr = function() {
@@ -39,10 +40,9 @@ UserSchema.methods.apiRepr = function() {
     firstName: this.firstName || '',
     lastName: this.lastName || ''
   };
-}
+};
 
 UserSchema.methods.validatePassword = function(password, callback){
-console.log(password);
   bcrypt.compare(password, this.password, function(err, isValid){
     if(err) {
       callback(err);
@@ -52,9 +52,9 @@ console.log(password);
   });
 };
 
-UserSchema.statics.hashPassword = function(password){
+UserSchema.static.hashPassword = function(password){
   return bcrypt.hash(password, 10);
-}
+};
 
 blogPostSchema.virtual('authorName').get(function() {
   return `${this.author.firstName} ${this.author.lastName}`.trim();
@@ -68,10 +68,9 @@ blogPostSchema.methods.apiRepr = function() {
     title: this.title,
     created: this.created
   };
-}
+};
 
 const BlogPost = mongoose.model('BlogPost', blogPostSchema);
 const User = mongoose.model('User', UserSchema);
 
 module.exports = {BlogPost, User};
-
