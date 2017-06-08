@@ -22,14 +22,21 @@ const UserSchema = new mongoose.Schema({
     },
     firstName{
       type:String,
-      required: true
+      default: ""
     },
     lastName{
       type:String,
-      required: true
+      default:""
     }
 });
 
+UserSchema.methods.apiRepr = function() {
+  return {
+    username: this.username || '',
+    firstName: this.firstName || '',
+    lastName: this.lastName || ''
+  };
+}
 
 UserSchema.methods.validatePassword = function(password, callback){
 
