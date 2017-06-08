@@ -10,6 +10,26 @@ const blogPostSchema = mongoose.Schema({
   created: {type: Date, default: Date.now}
 });
 
+var UserSchema = new mongoose.Schema({
+    username: {
+      type: String,
+      required: true,
+      unique: true    
+    },
+    password: {
+      type: String,
+      required: true
+    },
+    firstName{
+      type:String,
+      required: true
+    },
+    lastName{
+      type:String,
+      required: true
+    }
+});
+
 
 blogPostSchema.virtual('authorName').get(function() {
   return `${this.author.firstName} ${this.author.lastName}`.trim();
