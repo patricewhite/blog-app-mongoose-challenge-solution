@@ -10,11 +10,11 @@ const blogPostSchema = mongoose.Schema({
   created: {type: Date, default: Date.now}
 });
 
-var UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
     username: {
       type: String,
       required: true,
-      unique: true    
+      unique: true
     },
     password: {
       type: String,
@@ -29,6 +29,19 @@ var UserSchema = new mongoose.Schema({
       required: true
     }
 });
+
+
+UserSchema.methods.validatePassword = function(password, callback){
+
+  bycrypt.compare(password. this.password, function(err, isValid){
+    if(err) {
+      callback(err);
+      return;
+    }
+    callback(null, isValid);
+  });
+};
+
 
 
 blogPostSchema.virtual('authorName').get(function() {
