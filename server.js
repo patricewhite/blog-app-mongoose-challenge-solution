@@ -2,9 +2,11 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
+const jsonParser = bodyParser.json();
 
 const {DATABASE_URL, PORT} = require('./config');
 const {BlogPost} = require('./models');
+const {User} = require('./models');
 
 const app = express();
 
@@ -48,6 +50,25 @@ app.post('/posts', (req, res) => {
       return res.status(400).send(message);
     }
   }
+
+  app.post('/users', (req,res) => {
+    const username = req.user.username;
+    const firstName = req.user.firstName;
+    const lastName = req.user.lastName;
+    const password = req.user.password;
+
+    return User
+    .find({username})
+    .count()
+    .exec()
+    .then(count => {
+      if(count > 0){
+      return res.status(422).json({message: 'username already taken'});
+      }
+      return User.hashPassword(password);
+    })
+
+  });
 
   BlogPost
     .create({
