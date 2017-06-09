@@ -1,3 +1,4 @@
+'use strict';
 const bodyParser = require('body-parser');
 const express = require('express');
 const mongoose = require('mongoose');
@@ -19,15 +20,15 @@ mongoose.Promise = global.Promise;
 
 const basicStrategy = new BasicStrategy((username, password, callback) => {
   let user;
-  console.log("username =>", username);
-  console.log("password =>", password);
+  console.log('username =>', username);
+  console.log('password =>', password);
   User
 .findOne({username: username})
 .exec()
 .then(_user => {
   user = _user;
-  console.log("user=>", user);
-  
+  console.log('user=>', user);
+
   if (!user) {
     return callback(null, false, {message: 'Incorrect username'});
 
@@ -96,7 +97,7 @@ app.post('/posts', passport.authenticate('basic', {session: false}), (req, res) 
       title: req.body.title,
       content: req.body.content,
       author:
-       {
+      {
         firstName:req.user.firstName,
         lastName: req.user.lastName
       }
@@ -187,7 +188,7 @@ app.put('/posts/:id', passport.authenticate('basic', {session: false}),(req, res
 
 
 app.delete('/:id', passport.authenticate('basic', {session: false}), (req, res) => {
-  BlogPosts
+  BlogPost
     .findByIdAndRemove(req.params.id)
     .exec()
     .then(() => {

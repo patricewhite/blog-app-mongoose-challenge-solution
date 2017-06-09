@@ -155,17 +155,9 @@ describe('blog posts API resource', function() {
     // then prove that the post we get back has
     // right keys, and that `id` is there (which means
     // the data was inserted into db)
-    it('should add a new blog post', function() {
-
-      //const {User} = require('./models');
-
+    it.only('should add a new blog post', function() {
       const newPost = {
         title: faker.lorem.sentence(),
-          //doesn't require author anymore
-          // author: {
-          //   firstName: faker.name.firstName(),
-          //   lastName: faker.name.lastName(),
-          // },
         content: faker.lorem.text()
       };
 
@@ -188,6 +180,7 @@ describe('blog posts API resource', function() {
           return BlogPost.findById(res.body.id).exec();
         })
         .then(function(post) {
+          console.log(post);
           post.title.should.equal(newPost.title);
           post.content.should.equal(newPost.content);
           post.author.firstName.should.equal(USER.firstName);
@@ -221,17 +214,41 @@ describe('blog posts API resource', function() {
         })
         //cheking database
         .then(function (usr) {
-          console.log();
           usr[0].username.should.equal(newUser.username);
           usr[0].firstName.should.equal(newUser.firstName);
           usr[0].lastName.should.equal(newUser.lastName);
         });
     });
+
+    it.only('should reject user with no credentials', function(){
+      //if user_name != what's in database
+        //reject
+      //if password != what's in database
+        //reject
+
+        //none, worng user, wrong pass
+        //send request with the wrong credential/no crediatial
+
+      const newPost = {
+        title: faker.lorem.sentence(),
+        content: faker.lorem.text()
+      };
+      return chai.request(app)
+          .post('/posts')
+          .send(newPost)
+          .then(function(res) {
+            res.should.have.status(401);
+          });
+
+    });
+    it('should reject user with wrong username', function(){
+
+    });
+    it('should reject user with wrong password', function(){
+
+    });
+
   });
-
-    // myObject = [{name: 'Patrice', class: 'Thinkful'}]
-    //console.log(myObject[0].name, myObject[0].class)
-
 
   describe('PUT endpoint', function() {
 
