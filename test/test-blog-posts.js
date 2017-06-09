@@ -236,7 +236,7 @@ describe('blog posts API resource', function() {
       return chai.request(app)
           .post('/posts')
           .send(newPost)
-          .then(function(res) {
+          .catch(function(res) {
             res.should.have.status(401);
           });
 
