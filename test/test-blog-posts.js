@@ -258,8 +258,11 @@ describe('blog posts API resource', function() {
         .exec()
         .then(_post => {
             post = _post;
-            return chai.request(app).delete(`/posts/${post.id}`);
+            return chai.request(app)
+            .delete(`/posts/${post.id}`)
+            .auth(USER.username, USER.password)
         })
+    
         .then(res => {
             res.should.have.status(204);
             return BlogPost.findById(post.id);
