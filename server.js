@@ -20,14 +20,12 @@ mongoose.Promise = global.Promise;
 
 const basicStrategy = new BasicStrategy((username, password, callback) => {
   let user;
-  console.log('username =>', username);
-  console.log('password =>', password);
+
   User
 .findOne({username: username})
 .exec()
 .then(_user => {
   user = _user;
-  console.log('user=>', user);
 
   if (!user) {
     return callback(null, false, {message: 'Incorrect username'});
@@ -111,7 +109,6 @@ app.post('/posts', passport.authenticate('basic', {session: false}), (req, res) 
 });
 
 app.post('/users', (req,res) => {
-  console.log('post triggred');
   const username = req.body.username;
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
@@ -122,14 +119,12 @@ app.post('/users', (req,res) => {
   .count()
   .exec()
   .then(count => {
-    console.log('find finished');
     if(count > 0){
       return res.status(422).json({message: 'username already taken'});
     }
     return User.hashPassword(password);
   })
   .then(hash => {
-    console.log('after checking user doesn\'t exisit');
     return User
     .create({
       username:username,
@@ -139,7 +134,6 @@ app.post('/users', (req,res) => {
     });
   })
    .then(user =>{
-     console.log('should send 201');
      return res.status(201).json(user.apiRepr());
    })
    .catch (err=> {

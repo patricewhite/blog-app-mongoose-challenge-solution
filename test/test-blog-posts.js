@@ -180,7 +180,6 @@ describe('blog posts API resource', function() {
           return BlogPost.findById(res.body.id).exec();
         })
         .then(function(post) {
-          console.log(post);
           post.title.should.equal(newPost.title);
           post.content.should.equal(newPost.content);
           post.author.firstName.should.equal(USER.firstName);
@@ -248,7 +247,7 @@ describe('blog posts API resource', function() {
 
 
     });
-    it('should reject user with wrong password', function(){
+    it('should reject post with wrong password', function(){
       const newPost = {
         title: faker.lorem.sentence(),
         content: faker.lorem.text()
