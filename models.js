@@ -42,18 +42,16 @@ UserSchema.methods.apiRepr = function() {
   };
 };
 
-UserSchema.methods.validatePassword = function(password, callback){
-  bcrypt.compare(password, this.password, function(err, isValid){
-    if(err) {
-      callback(err);
-      return;
-    }
-    callback(null, isValid);
-  });
+UserSchema.methods.validatePassword = function(password){
+  return bcrypt
+  .compare(password, this.password)
+  .then(isValid => isValid);
 };
 
-UserSchema.static.hashPassword = function(password){
-  return bcrypt.hash(password, 10);
+UserSchema.statics.hashPassword = function(password){
+  return bcrypt
+  .hash(password, 10)
+  .then(hash => hash);
 };
 
 blogPostSchema.virtual('authorName').get(function() {

@@ -18,7 +18,6 @@ app.use(bodyParser.json());
 mongoose.Promise = global.Promise;
 
 const basicStrategy = new BasicStrategy((username, password, callback) => {
-  console.log(username);
   let user;
   User
 .findOne({username: username})
@@ -26,10 +25,10 @@ const basicStrategy = new BasicStrategy((username, password, callback) => {
 .then(_user => {
   user = _user;
   if (!user) {
-        //return callback(null, false, {message: 'Incorrect username'});
-    return null;
+    return callback(null, false, {message: 'Incorrect username'});
+
   }
-  return user.validatePassword(password,callback);
+  return user.validatePassword(password);
 })
 .then(isValid => {
   if (!isValid) {
@@ -72,29 +71,33 @@ app.get('/posts/:id', (req, res) => {
 });
 
 app.post('/posts', passport.authenticate('basic', {session: false}), (req, res) => {
-  const requiredFields = ['title', 'content', 'author'];
-  for (let i=0; i<requiredFields.length; i++) {
-    const field = requiredFields[i];
+  const requiredFields = ['title', 'content'];
+  requiredFields.forEach(field => {
     if (!(field in req.body)) {
-      const message = `Missing \`${field}\` in request body`;
-      console.error(message);
-      return res.status(400).send(message);
-    }
-  }
+      res.status(400).json(
+       {error: `Missing "${field}" in request body`});
+    }});
+
+  // for (let i=0; i<requiredFields.length; i++) {
+  //   const field = requiredFields[i];
+  //   if (!(field in req.body)) {
+  //     const message = `Missing \`${field}\` in request body`;
+  //     console.error(message);
+  //     return res.status(400).send(message);
+  //   }
+  // }
 
   BlogPost
     .create({
       title: req.body.title,
       content: req.body.content,
-      author: req.body.author
+      author: req.body.authorName
+       //{
+      //   firstName:req.user.firstName,
+      //   lastName: req.user.lastName
+      // }
     })
-    .then(blogPost =>{
-      let user = blogPost.apiRepr();
-      console.log(user);
-      res.json(user);
-      //res.status(201)
-      //.json(user)
-    })
+    .then(blogPost => res.status(201).json(blogPost.apiRepr()))
     .catch(err => {
       console.error(err);
       res.status(500).json({error: 'Something went wrong'});
