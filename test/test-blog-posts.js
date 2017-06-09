@@ -36,7 +36,7 @@ function tearDownDb() {
 
 function seedUser(){
     const newUser={
-        username:USER.username, 
+        username:USER.username,
         firstName:USER.firstName,
         lastName:USER.lastName
     };
@@ -220,6 +220,7 @@ describe('blog posts API resource', function() {
 
             return chai.request(app)
             .put(`/posts/${post.id}`)
+            .auth(USER.username, USER.password)
             .send(updateData);
         })
         .then(res => {
