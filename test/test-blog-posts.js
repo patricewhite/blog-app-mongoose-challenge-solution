@@ -154,46 +154,83 @@ describe('blog posts API resource', function() {
     // then prove that the post we get back has
     // right keys, and that `id` is there (which means
     // the data was inserted into db)
-        it('should add a new blog post', function() {
+      it('should add a new blog post', function() {
 
       //const {User} = require('./models');
 
-          const newPost = {
-            title: faker.lorem.sentence(),
+        const newPost = {
+          title: faker.lorem.sentence(),
           //doesn't require author anymore
           // author: {
           //   firstName: faker.name.firstName(),
           //   lastName: faker.name.lastName(),
           // },
-            content: faker.lorem.text()
+          content: faker.lorem.text()
         };
 
-          return chai.request(app)
+        return chai.request(app)
         .post('/posts')
         .auth(USER.username, USER.password)
         .send(newPost)
         .then(function(res) {
-            res.should.have.status(201);
-            res.should.be.json;
-            res.body.should.be.a('object');
-            res.body.should.include.keys(
+          res.should.have.status(201);
+          res.should.be.json;
+          res.body.should.be.a('object');
+          res.body.should.include.keys(
             'id', 'title', 'content', 'author', 'created');
-            res.body.title.should.equal(newPost.title);
+          res.body.title.should.equal(newPost.title);
           // cause Mongo should have created id on insertion
-            res.body.id.should.not.be.null;
-            res.body.author.should.equal(
+          res.body.id.should.not.be.null;
+          res.body.author.should.equal(
             `${USER.firstName} ${USER.lastName}`);
-            res.body.content.should.equal(newPost.content);
-            return BlogPost.findById(res.body.id).exec();
+          res.body.content.should.equal(newPost.content);
+          return BlogPost.findById(res.body.id).exec();
         })
         .then(function(post) {
-            post.title.should.equal(newPost.title);
-            post.content.should.equal(newPost.content);
-            post.author.firstName.should.equal(USER.firstName);
-            post.author.lastName.should.equal(USER.lastName);
+          post.title.should.equal(newPost.title);
+          post.content.should.equal(newPost.content);
+          post.author.firstName.should.equal(USER.firstName);
+          post.author.lastName.should.equal(USER.lastName);
+        });
+      });
+
+      it('should add a new user', function() {
+
+        const newUser = {
+          username: faker.internet.userName(),
+          password: 'toast',
+          firstName: faker.name.firstName(),
+          lastName: faker.name.lastName()
+        };
+
+        return chai.request(app)
+        .post('/users')
+        .send(newUser)
+        .then(function (res){
+          //checking response
+          res.should.have.status(201);
+          res.should.be.json;
+          res.body.should.be.a('object');
+          res.body.should.include.keys(
+          'username','firstName', 'lastName');
+          res.body.username.should.equal(newUser.username);
+          res.body.firstName.should.equal(newUser.firstName);
+          res.body.lastName.should.equal(newUser.lastName);
+          return User.find({username:res.body.username}).exec();
+        })
+        //cheking database
+        .then(function (usr) {
+          console.log();
+          usr[0].username.should.equal(newUser.username);
+          usr[0].firstName.should.equal(newUser.firstName);
+          usr[0].lastName.should.equal(newUser.lastName);
         });
       });
     });
+
+    // myObject = [{name: 'Patrice', class: 'Thinkful'}]
+    //console.log(myObject[0].name, myObject[0].class)
+
 
     describe('PUT endpoint', function() {
 
@@ -262,7 +299,7 @@ describe('blog posts API resource', function() {
             .delete(`/posts/${post.id}`)
             .auth(USER.username, USER.password)
         })
-    
+
         .then(res => {
             res.should.have.status(204);
             return BlogPost.findById(post.id);
