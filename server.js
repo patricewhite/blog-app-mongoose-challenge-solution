@@ -19,11 +19,15 @@ mongoose.Promise = global.Promise;
 
 const basicStrategy = new BasicStrategy((username, password, callback) => {
   let user;
+  console.log("username =>", username);
+  console.log("password =>", password);
   User
 .findOne({username: username})
 .exec()
 .then(_user => {
   user = _user;
+  console.log("user=>", user);
+  
   if (!user) {
     return callback(null, false, {message: 'Incorrect username'});
 
