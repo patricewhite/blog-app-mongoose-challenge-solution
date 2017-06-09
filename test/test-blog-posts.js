@@ -155,7 +155,7 @@ describe('blog posts API resource', function() {
     // then prove that the post we get back has
     // right keys, and that `id` is there (which means
     // the data was inserted into db)
-    it.only('should add a new blog post', function() {
+    it('should add a new blog post', function() {
       const newPost = {
         title: faker.lorem.sentence(),
         content: faker.lorem.text()
@@ -220,15 +220,7 @@ describe('blog posts API resource', function() {
         });
     });
 
-    it.only('should reject user with no credentials', function(){
-      //if user_name != what's in database
-        //reject
-      //if password != what's in database
-        //reject
-
-        //none, worng user, wrong pass
-        //send request with the wrong credential/no crediatial
-
+    it('should reject post with no credentials', function(){
       const newPost = {
         title: faker.lorem.sentence(),
         content: faker.lorem.text()
@@ -241,10 +233,33 @@ describe('blog posts API resource', function() {
           });
 
     });
-    it('should reject user with wrong username', function(){
+    it('should reject post with wrong username', function(){
+      const newPost = {
+        title: faker.lorem.sentence(),
+        content: faker.lorem.text()
+      };
+      return chai.request(app)
+          .post('/posts')
+          .auth(faker.internet.userName(), USER.password)
+          .send(newPost)
+          .catch(function(res) {
+            res.should.have.status(401);
+          });
+
 
     });
     it('should reject user with wrong password', function(){
+      const newPost = {
+        title: faker.lorem.sentence(),
+        content: faker.lorem.text()
+      };
+      return chai.request(app)
+          .post('/posts')
+          .auth(USER.username, faker.lorem.words())
+          .send(newPost)
+          .catch(function(res) {
+            res.should.have.status(401);
+          });
 
     });
 
